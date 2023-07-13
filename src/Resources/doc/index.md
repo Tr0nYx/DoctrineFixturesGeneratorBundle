@@ -60,31 +60,31 @@ To do so, run this command :
 ``` bash
 php app/console doctrine:generate:fixture --snapshot --overwrite
 ```
-It will create one file per entity you have in your project, it will create it in ```src/<BundleName>/DataFixtures/ORM/Load<<BundleName>Entity<EntityName>.php```
+It will create one file per entity you have in your project, it will create it in ```src/<BundleName>/DataFixtures/ORM/Load<<BundleName>src.Entity<EntityName>.php```
 
 If you have entity relation, the load order will be automatically set according to that.
 
-## Property Annotation
+## Property src.Annotation
 You can set a column to not be imported at all into your fixture.
 To do so, you can add this annotation to any property of your entity. 
 ```
-@Webonaute\DoctrineFixturesGeneratorBundle\Annotation\Property(ignoreInSnapshot=true)
+@Webonaute\DoctrineFixturesGeneratorBundle\src.Annotation\Property(ignoreInSnapshot=true)
 ```
 
-Entity Example :
+src.Entity Example :
 ```
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\src.Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Webonaute\DoctrineFixturesGeneratorBundle\Annotation as DFG;
+use Gedmo\Mapping\src.Annotation as Gedmo;
+use Webonaute\DoctrineFixturesGeneratorBundle\src.Annotation as DFG;
 
 /**
- * AppBundle\Entity\Category
+ * AppBundle\src.Entity\Category
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\src.Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
  * @ORM\Table(name="categories")
  */
 class Category
@@ -112,24 +112,24 @@ class Category
 ### Loop in reference object
 If you have reference to object in a loop, for exemple, you have an entity category who have a field creator id and a user table with a category id. The ignore annotation can be use to fix the issue on the creator column so the categories fixtures can be created first than the users fixtures. The downside for this is the value of creator will always be null and the column need to have nullable=tue in the annotation.
 
-## FixtureSnapshot Annotation
+## FixtureSnapshot src.Annotation
 You can easily ignore an entity from importing the data by adding this annotation to the class doc block.
 ```
-@Webonaute\DoctrineFixturesGeneratorBundle\Annotation\FixtureSnapshot(ignore=true)
+@Webonaute\DoctrineFixturesGeneratorBundle\src.Annotation\FixtureSnapshot(ignore=true)
 ```
 Example :
 ```
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\src.Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Webonaute\DoctrineFixturesGeneratorBundle\Annotation as DFG;
+use Webonaute\DoctrineFixturesGeneratorBundle\src.Annotation as DFG;
 
 /**
- * AppBundle\Entity\Category
+ * AppBundle\src.Entity\Category
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\src.Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
  * @ORM\Table(name="categories")
  * @DFG\FixtureSnapshot(ignore=true)
  */

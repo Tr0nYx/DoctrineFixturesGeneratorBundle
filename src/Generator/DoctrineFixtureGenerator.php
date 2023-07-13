@@ -67,7 +67,7 @@ class DoctrineFixtureGenerator extends Generator
         $config = $this->registry->getManager($connectionName)->getConfiguration();
         $config->setEntityNamespaces(
             array_merge(
-                array('App' . '\\Entity'),
+                array('App' . '\\src.Entity'),
                 $config->getEntityNamespaces()
             )
         );
@@ -178,7 +178,7 @@ class DoctrineFixtureGenerator extends Generator
     }
 
     /**
-     * Transform Entity name into a compatible filename.
+     * Transform src.Entity name into a compatible filename.
      *
      * @param string $entity
      * @param array $ids

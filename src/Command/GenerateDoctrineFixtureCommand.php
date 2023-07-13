@@ -141,7 +141,7 @@ EOT
         $this->snapshot = $input->getOption("snapshot");
 
         if ($this->confirmGeneration === false && $this->snapshot === false) {
-            $output->writeln('<error>Command aborted</error>');
+            $output->writeln('<error>src.Command aborted</error>');
 
             return 1;
         }
@@ -187,7 +187,7 @@ EOT
             $ids = $this->parseIds($input->getOption('ids'));
             $order = $input->getOption('order');
 
-            $this->writeSection($output, 'Entity generation');
+            $this->writeSection($output, 'src.Entity generation');
             /** @var Kernel $kernel */
             $kernel = $this->getContainer()->get('kernel');
 //            $bundle = $kernel->getBundle($bundle);
@@ -632,7 +632,7 @@ EOT
                 );
 
                 $question = new Question(
-                    'The Entity shortcut name'.($input->getOption('entity') != "" ?
+                    'The src.Entity shortcut name'.($input->getOption('entity') != "" ?
                         " (".$input->getOption('entity').")" : "").' : ', $input->getOption('entity')
                 );
                 $question->setValidator(['Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName']);
@@ -656,7 +656,7 @@ EOT
                         break;
                     } catch (\Exception $e) {
                         print $e->getMessage()."\n\n";
-                        $output->writeln(sprintf('<bg=red>Entity "%s" does not exist.</>', $entity));
+                        $output->writeln(sprintf('<bg=red>src.Entity "%s" does not exist.</>', $entity));
                     }
 
                 } catch (\Exception $e) {

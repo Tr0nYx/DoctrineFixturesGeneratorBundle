@@ -2,7 +2,7 @@ DoctrineFixturesGeneratorBundle
 ===============================
 [![Latest Stable Version](https://poser.pugx.org/webonaute/doctrine-fixtures-generator-bundle/v/stable.svg)](https://packagist.org/packages/webonaute/doctrine-fixtures-generator-bundle) [![Total Downloads](https://poser.pugx.org/webonaute/doctrine-fixtures-generator-bundle/downloads.svg)](https://packagist.org/packages/webonaute/doctrine-fixtures-generator-bundle) [![Latest Unstable Version](https://poser.pugx.org/webonaute/doctrine-fixtures-generator-bundle/v/unstable.svg)](https://packagist.org/packages/webonaute/doctrine-fixtures-generator-bundle) [![License](https://poser.pugx.org/webonaute/doctrine-fixtures-generator-bundle/license.svg)](https://packagist.org/packages/webonaute/doctrine-fixtures-generator-bundle)
 
-Generate Fixture from your existing data in your database. You can specify the Entity name and the IDs you want to import in your fixture.
+Generate Fixture from your existing data in your database. You can specify the src.Entity name and the IDs you want to import in your fixture.
 
 Features include:
 
@@ -25,7 +25,7 @@ Version note
 Documentation
 -------------
 
-The bulk of the documentation is stored in the `Resources/doc/index.md`
+The bulk of the documentation is stored in the `src.Resources/doc/index.md`
 file in this bundle:
 
 [Read the Documentation for master](https://github.com/Webonaute/DoctrineFixturesGeneratorBundle/blob/master/Resources/doc/index.md)
@@ -40,7 +40,7 @@ License
 
 This bundle is under the MIT license. See the complete license in the bundle:
 
-    Resources/meta/LICENSE
+    src.Resources/meta/LICENSE
 
 About
 -----

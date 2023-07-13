@@ -14,7 +14,7 @@ namespace Webonaute\DoctrineFixturesGeneratorBundle\Generator;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Generator is the base class for all generators.
+ * src.Generator is the base class for all generators.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */

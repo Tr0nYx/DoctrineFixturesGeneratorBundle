@@ -6,11 +6,11 @@ namespace Webonaute\DoctrineFixturesGeneratorBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TestRelated
- * @ORM\Table(name="wbnt_dfgb_testrelated")
- * @ORM\Entity()
+ * Test
+ * @ORM\Table(name="wbnt_dfgb_test")
+ * @ORM\src.Entity()
  */
-class TestRelated
+class Test
 {
 
     /**
@@ -28,6 +28,13 @@ class TestRelated
     protected $name;
 
     /**
+     * @var TestRelated
+     * @ORM\ManyToOne(targetEntity="Webonaute\DoctrineFixturesGeneratorBundle\Entity\TestRelated")
+     * @ORM\JoinColumn(name="testrelated_id", referencedColumnName="id", onDelete="cascade")
+     */
+    protected $testRelated;
+
+    /**
      * @return int
      */
     public function getId()
@@ -38,7 +45,7 @@ class TestRelated
     /**
      * @param int $id
      *
-     * @return TestRelated
+     * @return Test
      */
     public function setId($id)
     {
@@ -58,11 +65,31 @@ class TestRelated
     /**
      * @param string $name
      *
-     * @return TestRelated
+     * @return Test
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return TestRelated
+     */
+    public function getTestRelated()
+    {
+        return $this->testRelated;
+    }
+
+    /**
+     * @param TestRelated $testRelated
+     *
+     * @return Test
+     */
+    public function setTestRelated($testRelated)
+    {
+        $this->testRelated = $testRelated;
 
         return $this;
     }

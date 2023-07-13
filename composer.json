@@ -40,7 +40,14 @@
     "phpstan/phpstan": "^1.10"
   },
   "autoload": {
-    "psr-0": {"Webonaute\\DoctrineFixturesGeneratorBundle": ""}
+    "psr-4": {
+      "Webonaute\\DoctrineFixturesGeneratorBundle": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Webonaute\\DoctrineFixturesGeneratorBundle\\Tests\\": "tests/"
+    }
   },
   "target-dir": "Webonaute/DoctrineFixturesGeneratorBundle",
   "extra": {

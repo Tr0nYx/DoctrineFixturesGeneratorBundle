@@ -4,7 +4,7 @@ namespace Webonaute\DoctrineFixturesGeneratorBundle\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * @Annotation
+ * @src.Annotation
  * @Target("PROPERTY")
  */
 final class Property extends Annotation
