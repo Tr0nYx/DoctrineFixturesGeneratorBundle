@@ -14,8 +14,7 @@ namespace Webonaute\DoctrineFixturesGeneratorBundle\Command;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Webonaute\DoctrineFixturesGeneratorBundle\Command\GenerateDoctrineCommand;
-use Webonaute\DoctrineFixturesGeneratorBundle\Command\Validators;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,6 +33,11 @@ use Webonaute\DoctrineFixturesGeneratorBundle\Generator\Entity;
  *
  * @author Mathieu Delisle <mdelisle@webonaute.ca>
  */
+#[AsCommand(
+    name: 'doctrine:generate:fixture',
+    description: 'Generates a new Doctrine entity fixture inside a bundle from existing data',
+    aliases: ['generate:doctrine:fixture']
+)]
 class GenerateDoctrineFixtureCommand extends GenerateDoctrineCommand
 {
 
@@ -62,9 +66,6 @@ class GenerateDoctrineFixtureCommand extends GenerateDoctrineCommand
     protected function configure()
     {
         $this
-            ->setName('doctrine:generate:fixture')
-            ->setAliases(['generate:doctrine:fixture'])
-            ->setDescription('Generates a new Doctrine entity fixture inside a bundle from existing data.')
             ->addOption(
                 'entity',
                 null,
