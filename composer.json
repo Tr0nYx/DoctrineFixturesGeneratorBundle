@@ -41,7 +41,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Webonaute\\DoctrineFixturesGeneratorBundle": "src/"
+      "Webonaute\\DoctrineFixturesGeneratorBundle\\": "src/"
     }
   },
   "autoload-dev": {
