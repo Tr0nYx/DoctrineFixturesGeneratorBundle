@@ -11,14 +11,13 @@
 
 namespace Webonaute\DoctrineFixturesGeneratorBundle\Generator;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Webonaute\DoctrineFixturesGeneratorBundle\Command\GenerateDoctrineFixtureCommand;
-use Webonaute\DoctrineFixturesGeneratorBundle\Generator\Generator;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Webonaute\DoctrineFixturesGeneratorBundle\Tool\FixtureGenerator;
 
 /**
@@ -32,20 +31,20 @@ class DoctrineFixtureGenerator extends Generator
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
-    private $registry;
+    private ManagerRegistry $registry;
 
     /**
      * Constructor
      *
      * @param Filesystem $filesystem
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Filesystem $filesystem, RegistryInterface $registry)
+    public function __construct(Filesystem $filesystem, ManagerRegistry $registry)
     {
         $this->filesystem = $filesystem;
         $this->registry = $registry;
@@ -54,15 +53,23 @@ class DoctrineFixtureGenerator extends Generator
     /**
      * Generate Fixture from bundle name, entity name, fixture name and ids
      *
-     * @param BundleInterface $bundle
+     * @param string $bundle
      * @param string $entity
      * @param string $name
      * @param array $ids
-     * @param string|null $connectionName
+     * @param $order
+     * @param null $connectionName
+     * @param bool $overwrite
+     * @param bool $isFqcnEntity
+     * @param bool $skipEmptyFixture
      * @return bool
+     * @throws \Doctrine\ORM\Exception\NotSupported
      */
-    public function generate($bundle, $entity, $name, array $ids, $order, $connectionName = null, $overwrite = false, $isFqcnEntity = false, bool $skipEmptyFixture = false)
+    public function generate($bundle, string $entity, string $name, array $ids, $order, $connectionName = null, bool $overwrite, bool $isFqcnEntity, bool $skipEmptyFixture = false)
     {
+        if (!is_string($bundle)){
+            return false;
+        }
         // configure the bundle (needed if the bundle does not contain any Entities yet)
         $config = $this->registry->getManager($connectionName)->getConfiguration();
         $config->setEntityNamespaces(

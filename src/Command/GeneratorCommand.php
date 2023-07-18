@@ -11,8 +11,12 @@
 
 namespace Webonaute\DoctrineFixturesGeneratorBundle\Command;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Kernel;
+use Webonaute\DoctrineFixturesGeneratorBundle\Generator\DoctrineFixtureGenerator;
 use Webonaute\DoctrineFixturesGeneratorBundle\Generator\Generator;
 use Webonaute\DoctrineFixturesGeneratorBundle\Command\Helper\QuestionHelper;
 
@@ -23,10 +27,22 @@ use Webonaute\DoctrineFixturesGeneratorBundle\Command\Helper\QuestionHelper;
  */
 abstract class GeneratorCommand extends Command
 {
-    /**
-     * @var Generator
-     */
-    private $generator;
+    private DoctrineFixtureGenerator $generator;
+
+    private Registry $manager;
+
+    private FileSystem $filesystem;
+
+    private Kernel $kernel;
+
+    public function __construct(Registry $manager, Filesystem $filesystem, DoctrineFixtureGenerator $generator, Kernel $kernel)
+    {
+        $this->manager = $manager;
+        $this->filesystem = $filesystem;
+        $this->generator = $generator;
+        $this->kernel = $kernel;
+        parent::__construct();
+    }
 
     // only useful for unit tests
     public function setGenerator(Generator $generator)
@@ -54,7 +70,9 @@ abstract class GeneratorCommand extends Command
             $skeletonDirs[] = $dir;
         }
 
-        if (is_dir($dir = $this->getContainer()->get('kernel')->getRootdir().'/src.Resources/SensioGeneratorBundle/skeleton')) {
+        if (is_dir(
+            $dir = $this->getContainer()->get('kernel')->getRootdir().'/src.Resources/SensioGeneratorBundle/skeleton'
+        )) {
             $skeletonDirs[] = $dir;
         }
 
@@ -86,5 +104,29 @@ abstract class GeneratorCommand extends Command
         $projectRootDir = dirname($this->getContainer()->getParameter('kernel.root_dir'));
 
         return str_replace($projectRootDir.'/', '', realpath($absolutePath) ?: $absolutePath);
+    }
+
+    /**
+     * @return \Doctrine\Bundle\DoctrineBundle\Registry
+     */
+    public function getDoctrine(): Registry
+    {
+        return $this->manager;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFileSystem(): Filesystem
+    {
+        return $this->filesystem;
+    }
+
+    /**
+     * @return Kernel
+     */
+    public function getKernel(): Kernel
+    {
+        return $this->kernel;
     }
 }

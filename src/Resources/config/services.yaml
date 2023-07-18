@@ -1,5 +1,14 @@
 services:
-
+    Webonaute\DoctrineFixturesGeneratorBundle\Generator\DoctrineFixtureGenerator:
+        class: Webonaute\DoctrineFixturesGeneratorBundle\Generator\DoctrineFixtureGenerator
+        arguments:
+            - '@filesystem'
+            - '@doctrine'
     Webonaute\DoctrineFixturesGeneratorBundle\Command\GenerateDoctrineFixtureCommand:
+        arguments:
+            - '@doctrine'
+            - '@filesystem'
+            - '@Webonaute\DoctrineFixturesGeneratorBundle\Generator\DoctrineFixtureGenerator'
+            - '@kernel'
         tags:
             - { name: 'console.command', command: 'doctrine:generate:fixture' }

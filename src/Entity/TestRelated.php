@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TestRelated
  * @ORM\Table(name="wbnt_dfgb_testrelated")
- * @ORM\src.Entity()
+ * @ORM\Entity()
  */
 class TestRelated
 {

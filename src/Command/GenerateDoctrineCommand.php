@@ -33,7 +33,7 @@ abstract class GenerateDoctrineCommand extends GeneratorCommand
 
     protected function getEntityMetadata($entity)
     {
-        $factory = new DisconnectedMetadataFactory($this->getContainer()->get('doctrine'));
+        $factory = new DisconnectedMetadataFactory($this->getDoctrine());
 
         return $factory->getClassMetadata($entity)->getMetadata();
     }

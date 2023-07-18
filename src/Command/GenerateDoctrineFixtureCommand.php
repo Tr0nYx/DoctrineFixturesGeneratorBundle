@@ -44,22 +44,22 @@ class GenerateDoctrineFixtureCommand extends GenerateDoctrineCommand
     /**
      * @var bool
      */
-    protected $confirmGeneration = true;
+    protected bool $confirmGeneration = true;
 
     /**
      * @var bool
      */
-    protected $snapshot = false;
+    protected bool $snapshot = false;
 
     /**
      * @var OutputInterface
      */
-    protected $output;
+    protected OutputInterface $output;
 
     /**
      * @var EntityManager
      */
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     public const SYMFONY_4_BUNDLE_ALIAS = "App";
 
@@ -126,8 +126,8 @@ EOT
     protected function createGenerator()
     {
         return new DoctrineFixtureGenerator(
-            $this->getContainer()->get('filesystem'),
-            $this->getContainer()->get('doctrine')
+            $this->getFileSystem(),
+            $this->getDoctrine()
         );
     }
 
@@ -148,7 +148,7 @@ EOT
 
         $connectionName = $input->getOption('connectionName');
         /** @var EntityManager $em */
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManager($connectionName);
+        $this->entityManager = $this->getDoctrine()->getManager($connectionName);
 
         $name = $input->getOption('name');
         $generator = $this->getGenerator();
@@ -204,9 +204,8 @@ EOT
     }
 
     /**
-     * @param BundleInterface $bundle
-     *
-     * @return DoctrineFixtureGenerator
+     * @param BundleInterface|null $bundle
+     * @return \Webonaute\DoctrineFixturesGeneratorBundle\Generator\Generator
      */
     protected function getGenerator(BundleInterface $bundle = null)
     {
@@ -222,9 +221,11 @@ EOT
     {
         $classes = [];
 
-        $em = $this->getContainer()->get('doctrine')->getManager($connectionName);
+        /** @var \Doctrine\Persistence\ObjectManager $em */
+        $em = $this->getDoctrine()->getManager($connectionName);
+        /** @var \Doctrine\ORM\Mapping\ClassMetadataFactory $mf */
         $mf = $em->getMetadataFactory();
-
+        /** @var  $metas */
         $metas = $mf->getAllMetadata();
 
         /** @var ClassMetadata $meta */
@@ -474,8 +475,7 @@ EOT
         $bundle = null;
 
         if (count($namespaceParts) > 0) {
-            /** @var Kernel $kernel */
-            $kernel = $this->getContainer()->get('kernel');
+            $kernel = $this->getKernel();
 
             do {
                 try {
