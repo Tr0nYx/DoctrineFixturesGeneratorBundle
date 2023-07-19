@@ -65,16 +65,25 @@ class DoctrineFixtureGenerator extends Generator
      * @return bool
      * @throws \Doctrine\ORM\Exception\NotSupported
      */
-    public function generate($bundle, string $entity, string $name, array $ids, $order, $connectionName = null, bool $overwrite, bool $isFqcnEntity, bool $skipEmptyFixture = false)
-    {
-        if (!is_string($bundle)){
+    public function generate(
+        $bundle,
+        string $entity,
+        $name,
+        array $ids = [],
+        $order = null,
+        $connectionName = null,
+        bool $overwrite = false,
+        bool $isFqcnEntity = false,
+        bool $skipEmptyFixture = false
+    ) {
+        if (!is_string($bundle)) {
             return false;
         }
         // configure the bundle (needed if the bundle does not contain any Entities yet)
         $config = $this->registry->getManager($connectionName)->getConfiguration();
         $config->setEntityNamespaces(
             array_merge(
-                array('App' . '\\src.Entity'),
+                array('App'.'\\src.Entity'),
                 $config->getEntityNamespaces()
             )
         );
@@ -82,7 +91,7 @@ class DoctrineFixtureGenerator extends Generator
         $fixtureFileName = $this->getFixtureFileName($entity, $name, $ids);
         $entityClass = $this->getFqcnEntityClass($entity, 'App', $isFqcnEntity);
 
-        $fixturePath = ($bundle === GenerateDoctrineFixtureCommand::SYMFONY_4_BUNDLE_ALIAS ? 'src' : $bundle) . '/DataFixtures/ORM/' . $fixtureFileName . '.php';
+        $fixturePath = ($bundle === GenerateDoctrineFixtureCommand::SYMFONY_4_BUNDLE_ALIAS ? 'src' : $bundle).'/DataFixtures/ORM/'.$fixtureFileName.'.php';
         $bundleNameSpace = $bundle;
         if ($overwrite === false && file_exists($fixturePath)) {
             throw new \RuntimeException(sprintf('Fixture "%s" already exists.', $fixtureFileName));
@@ -106,12 +115,12 @@ class DoctrineFixtureGenerator extends Generator
         $repo = $em->getRepository($class->name);
         if (empty($ids)) {
             $items = $repo->findAll();
-            $items = array_filter($items, function($item) use ($entityClass){
-               if (get_class($item) === $entityClass){
-                   return true;
-               } else{
-                   return false;
-               }
+            $items = array_filter($items, function ($item) use ($entityClass) {
+                if (get_class($item) === $entityClass) {
+                    return true;
+                } else {
+                    return false;
+                }
             });
         } else {
             $items = $repo->{$this->getFindByIdentifier($class)}($ids);
@@ -120,7 +129,7 @@ class DoctrineFixtureGenerator extends Generator
         $fixtureGenerator->setItems($items);
 
         //skip fixture who dont have data to import.
-        if ($skipEmptyFixture === true && count($items) === 0){
+        if ($skipEmptyFixture === true && count($items) === 0) {
             return false;
         }
 
@@ -128,6 +137,7 @@ class DoctrineFixtureGenerator extends Generator
 
         $this->filesystem->mkdir(dirname($fixturePath));
         file_put_contents($fixturePath, $fixtureCode);
+
         return true;
     }
 
@@ -143,11 +153,11 @@ class DoctrineFixtureGenerator extends Generator
     protected function getFindByIdentifier(ClassMetadata $class)
     {
         $identifiers = $class->getIdentifier();
-        if (count($identifiers) > 1){
+        if (count($identifiers) > 1) {
             throw new \Exception("Multiple identifiers is not supported.");
         }
 
-        if (count($identifiers) === 0){
+        if (count($identifiers) === 0) {
             throw new \LogicException("This entity have no identifier.");
         }
 
@@ -199,7 +209,7 @@ class DoctrineFixtureGenerator extends Generator
 
         //add prefix.
         if (strlen($prefix) > 0) {
-            $name = $prefix . ucfirst($name);
+            $name = $prefix.ucfirst($name);
         }
 
         //add first ID in the name.
@@ -215,7 +225,7 @@ class DoctrineFixtureGenerator extends Generator
         if ($isFqcnEntity) {
             return $entity;
         } else {
-            return $this->registry->getAliasNamespace($bundle) . '\\' . $entity;
+            return $this->registry->getAliasNamespace($bundle).'\\'.$entity;
         }
     }
 

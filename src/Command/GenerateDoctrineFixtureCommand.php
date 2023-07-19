@@ -75,8 +75,12 @@ class GenerateDoctrineFixtureCommand extends GenerateDoctrineCommand
             ->addOption('snapshot', null, InputOption::VALUE_NONE, 'Create a full snapshot of DB.')
             ->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite entity fixture file if already exist.')
             ->addOption('ids', null, InputOption::VALUE_OPTIONAL, 'Only create fixture for this specific ID.')
-            ->addOption('name', null, InputOption::VALUE_OPTIONAL,
-                'Give a specific name to the fixture or a prefix with snapshot option.')
+            ->addOption(
+                'name',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Give a specific name to the fixture or a prefix with snapshot option.'
+            )
             ->addOption('order', null, InputOption::VALUE_OPTIONAL, 'Give a specific order to the fixture.')
             ->addOption(
                 'connectionName',
@@ -172,9 +176,9 @@ EOT
                         true,
                         true
                     );
-                    if ($result){
+                    if ($result) {
                         $tag = "info";
-                    }else{
+                    } else {
                         $tag = "comment";
                     }
                     $this->output->writeln("<$tag>Generated fixture (lvl {$entity->level}) for {$entity->name}</$tag>");
@@ -185,12 +189,9 @@ EOT
             list($bundle, $entity) = $this->parseShortcutNotation($entity);
             $name = $input->getOption('name');
             $ids = $this->parseIds($input->getOption('ids'));
-            $order = $input->getOption('order');
+            $order = $input->getOption('order') ?? 1;
 
             $this->writeSection($output, 'src.Entity generation');
-            /** @var Kernel $kernel */
-            $kernel = $this->getContainer()->get('kernel');
-//            $bundle = $kernel->getBundle($bundle);
 
             $generator->generate('src', $entity, $name, array_values($ids), $order, $connectionName, $overwrite);
 
@@ -238,7 +239,7 @@ EOT
                 continue;
             }
 
-            if ($this->skipEntity($meta)){
+            if ($this->skipEntity($meta)) {
                 $this->output->writeln("<comment>Skip entity ".$meta->getName()."</comment>");
                 continue;
             }
@@ -298,6 +299,10 @@ EOT
         $level = 1;
         $countMeta = count($metadatas);
         $entities = [];
+        foreach ($metadatas as $mkey => $meta) {
+            //dump($metadatas[$mkey]->getName());
+        }
+        //dd();
 
         $namespaces = $this->entityManager->getConfiguration()->getEntityNamespaces();
 
@@ -311,12 +316,15 @@ EOT
              */
             foreach ($metadatas as $mkey => $meta) {
                 //check against last orders entities.
+                if ($meta->getName() == 'App\Entity\User') {
+                    //dd($this->isEntityLevelReached($meta, $entities));
+                }
                 if ($this->isEntityLevelReached($meta, $entities)) {
                     if ($this->isIgnoredEntity($meta) === false) {
                         $entity = new Entity();
                         $entity->level = $level;
                         $entity->name = $meta->getName();
-                        $entity->bundle = $this->findBundleInterface($namespaces, $meta->namespace);;
+                        $entity->bundle = $this->findBundleInterface($namespaces, $meta->namespace);
                         $entity->meta = $meta;
                         //add to temporary group of entities.
                         $entitiesCurrentOrder[] = $entity;
@@ -336,7 +344,7 @@ EOT
         } while (!empty($metadatas) && $level <= $countMeta);
 
         //show entity who could not be ordered and get ignored.
-        if (!empty($metadatas)){
+        if (!empty($metadatas)) {
             foreach ($metadatas as $meta) {
                 $output->writeln("<comment>Could not get ordered {$meta->getName()}</comment>");
             }
@@ -365,9 +373,13 @@ EOT
                     $propertyReflection,
                     'Webonaute\DoctrineFixturesGeneratorBundle\Annotation\Property'
                 );
+                $propertyAttribute = !empty($propertyReflection->getAttributes(
+                    'Webonaute\DoctrineFixturesGeneratorBundle\Annotation\Property'
+                ));
+
                 $annotations = $reader->getPropertyAnnotations($propertyReflection);
 
-                if ($propertyAnnotation !== null && $propertyAnnotation->ignoreInSnapshot === true) {
+                if (($propertyAnnotation !== null && $propertyAnnotation->ignoreInSnapshot === true) || $propertyAttribute == true) {
                     //ignore this mapping. (data will not be exported for that field.)
                     continue;
                 }
@@ -377,9 +389,10 @@ EOT
                     continue;
                 }
 
+
                 if ($mapping['isOwningSide'] === true && $this->mappingSatisfied($mapping, $entities) === false) {
                     // if mapping is made on abstract class with discriminator. ensure those are include before.
-                    if ($this->discriminatorSatisfied($mapping['targetEntity'], $entities)){
+                    if ($this->discriminatorSatisfied($mapping['targetEntity'], $entities)) {
                         continue;
                     }
 
@@ -392,31 +405,32 @@ EOT
 
     }
 
-    protected function discriminatorSatisfied($entity, $entities){
+    protected function discriminatorSatisfied($entity, $entities)
+    {
         $entityMapping = $this->entityManager->getClassMetadata($entity);
         $reflectionClass = $entityMapping->getReflectionClass();
 
-        if ($reflectionClass->isAbstract()){
-           if (!empty($entityMapping->discriminatorMap)){
-               foreach ($entityMapping->discriminatorMap as $discriminator){
-                   $found = false;
-                   if (!empty($entities)){
-                       foreach ($entities as $checkEntity) {
-                           if ($checkEntity->name === $discriminator) {
-                               $found = true;
-                               break;
-                           }
-                       }
-                   }
+        if ($reflectionClass->isAbstract()) {
+            if (!empty($entityMapping->discriminatorMap)) {
+                foreach ($entityMapping->discriminatorMap as $discriminator) {
+                    $found = false;
+                    if (!empty($entities)) {
+                        foreach ($entities as $checkEntity) {
+                            if ($checkEntity->name === $discriminator) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
 
-                   if (!$found){
-                       return false;
-                   }
-               }
-           }else{
-               return false;
-           }
-        }else{
+                    if (!$found) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+        } else {
             return false;
         }
 
@@ -426,6 +440,11 @@ EOT
     protected function mappingSatisfied($mapping, $entities)
     {
         foreach ($entities as $entity) {
+            if ($mapping['targetEntity'] == "App\Entity\User"){
+                //dump($mapping['targetEntity']);
+                //dd($entity->name);
+            }
+            //dd($mapping['targetEntity']);
             if ($entity->name === $mapping['targetEntity']) {
                 return true;
             }
@@ -453,8 +472,18 @@ EOT
             'Webonaute\DoctrineFixturesGeneratorBundle\Annotation\FixtureSnapshot'
         );
 
+        $fixtureSnapshotAttribute = !empty(
+        $meta->getReflectionClass()->getAttributes(
+            'Webonaute\DoctrineFixturesGeneratorBundle\Annotation\FixtureSnapshot'
+        )
+        );
+
         if ($fixtureSnapshotAnnotation !== null) {
             $result = $fixtureSnapshotAnnotation->ignore;
+        }
+
+        if ($fixtureSnapshotAttribute !== null) {
+            $result = $fixtureSnapshotAttribute;
         }
 
         return $result;
@@ -727,8 +756,11 @@ EOT
                             // whether there is only one or more duplicate numbers from given range
                             $idsWord = count($duplicateIds) > 1 ? 'Ids' : 'Id';
                             $duplicateIdsString = implode(', ', $duplicateIds);
-                            $msg = sprintf($idsWord.' "%s" from given range "%s" is already defined.',
-                                $duplicateIdsString, $id);
+                            $msg = sprintf(
+                                $idsWord.' "%s" from given range "%s" is already defined.',
+                                $duplicateIdsString,
+                                $id
+                            );
                         } else {
                             $msg = sprintf('Id "%s" is already defined.', $id);
                         }
